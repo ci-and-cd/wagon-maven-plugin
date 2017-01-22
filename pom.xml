@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>wagon-maven-plugin</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1-snapshot-chshawkn-1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Wagon Maven Plugin</name>
 
@@ -26,10 +26,16 @@
     <maven>3.0</maven>
   </prerequisites>
 
-  <scm>
+  <!--scm>
     <connection>scm:git:https://github.com/mojohaus/wagon-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/mojohaus/wagon-maven-plugin.git</developerConnection>
     <url>https://github.com/mojohaus/wagon-maven-plugin/</url>
+  </scm-->
+  <scm>
+    <connection>scm:git:https://github.com/chshawkn/wagon-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:chshawkn/wagon-maven-plugin.git</developerConnection>
+    <url>https://github.com/chshawkn/wagon-maven-plugin</url>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
@@ -252,4 +258,103 @@
 
   </build>
 
+  <profiles>
+    <!--
+    Usage:
+    1. Execute following command and put output (encrypted master password) into ~/.m2/settings-security.xml
+       mvn -emp ${master_password}
+    2. mvn -ep ${your_github_password}
+    3. put following content into ~/.m2/settings.xml
+       &lt;server&gt;
+         &lt;id&gt;github-${your_github_username}&lt;/id&gt;
+         &lt;username&gt;${your_github_account_email}&lt;/username&gt;
+         &lt;password&gt;{encrypted_your_github_password}&lt;/password&gt;
+       &lt;/server&gt;
+    4. To publish a release
+       Following actions can be automated using the maven-release-plugin
+         1. Commit any modifications
+         2. Remove the -SNAPSHOT from the version number
+         3. Deploy the module to the release-repository
+         4. Tag the source code with the version number
+         5. Increment the version number and append -SNAPSHOT
+       mvn clean release:prepare
+       mvn release:perform
+    5. To publish a snapshot
+       mvn clean package deploy
+    -->
+    <profile>
+      <id>release-and-publish-to-github</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <!-- github server corresponds to entry in ~/.m2/settings.xml -->
+        <github.global.server>github-chshawkn</github.global.server>
+      </properties>
+      <!-- see: http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github -->
+      <distributionManagement>
+        <repository>
+          <id>internal.repo</id>
+          <name>Temporary Staging Repository</name>
+          <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+      </distributionManagement>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.5.3</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.maven.scm</groupId>
+                    <artifactId>maven-scm-provider-gitexe</artifactId>
+                    <version>1.9.5</version>
+                </dependency>
+            </dependencies>
+            <configuration>
+              <useReleaseProfile>false</useReleaseProfile>
+              <arguments>-Pmojo-release</arguments>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.8.2</version>
+            <configuration>
+              <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.12</version>
+            <configuration>
+              <!-- git commit message -->
+              <message>Maven artifacts for ${project.version}</message>
+              <!-- disable webpage processing -->
+              <noJekyll>true</noJekyll>
+              <!-- matches distribution management repository url above -->
+              <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+              <!-- remote branch name -->
+              <branch>refs/heads/mvn-repo</branch>
+              <includes><include>**/*</include></includes>
+              <!-- github repo name -->
+              <repositoryName>maven-settings-decoder</repositoryName>
+              <!-- github username  -->
+              <repositoryOwner>chshawkn</repositoryOwner>
+            </configuration>
+            <executions>
+              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+              <execution>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
