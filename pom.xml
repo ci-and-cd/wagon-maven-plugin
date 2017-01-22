@@ -290,7 +290,13 @@
        mvn -Dmaven.test.skip=true clean package deploy
 
     Note:
-    create gpg key on mac
+    Create a empty mvn-repo branch on github
+    git checkout --orphan mvn-repo
+    git rm -rf .
+    git commit --allow-empty -m "root commit"
+    git push origin mvn-repo
+
+    Create gpg key on mac
     brew install gpg
     execute gpg \-\-list-keys to create trustdb.gpg
     gpg \-\-list-keys
