@@ -400,7 +400,7 @@ EOF gpg2 \-\-batch \-\-gen-key maven_gpg_key_with_default_algorithms gpg \-\-all
               <branch>refs/heads/mvn-repo</branch>
               <includes><include>**/*</include></includes>
               <!-- github repo name -->
-              <repositoryName>maven-settings-decoder</repositoryName>
+              <repositoryName>${project.artifactId}</repositoryName>
               <!-- github username  -->
               <repositoryOwner>chshawkn</repositoryOwner>
             </configuration>
