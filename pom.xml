@@ -279,7 +279,7 @@
          5. Increment the version number and append -SNAPSHOT
         see: https://dzone.com/articles/configuring-the-maven-release-plugin-to-skip-tests
 
-          mvn -DpreparationGoals=compile release:prepare
+          mvn -DpreparationGoals=compile -Darguments="" release:prepare
           mvn -Darguments="-DskipTests" release:perform
 
         Delete tag on release failed, see: https://www.abeautifulsite.net/how-to-delete-a-tag-on-github
