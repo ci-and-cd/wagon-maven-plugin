@@ -66,7 +66,9 @@ public class SshExecMojo
             {
                 try
                 {
-                    Streams stream = ( (ScpWagon) wagon ).executeCommand( commands[i], true, false );
+                    // since org.apache.maven.wagon:wagon-ssh:2.11-SNAPSHOT
+                    //Streams stream = ( (ScpWagon) wagon ).executeCommand( commands[i], true, false );
+                    Streams stream = ( (ScpWagon) wagon ).executeCommand( commands[i], true );
                     this.getLog().info( "sshexec: " + commands[i] + " ..." );
                     if ( displayCommandOutputs )
                     {
