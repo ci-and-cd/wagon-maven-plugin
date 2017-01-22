@@ -33,7 +33,7 @@
   </scm-->
   <scm>
     <connection>scm:git:https://github.com/chshawkn/wagon-maven-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:chshawkn/wagon-maven-plugin.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/chshawkn/wagon-maven-plugin.git</developerConnection>
     <url>https://github.com/chshawkn/wagon-maven-plugin</url>
     <tag>HEAD</tag>
   </scm>
