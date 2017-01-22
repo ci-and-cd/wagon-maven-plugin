@@ -313,7 +313,7 @@
             </dependencies>
             <configuration>
               <useReleaseProfile>false</useReleaseProfile>
-              <arguments>-Pmojo-release</arguments>
+              <arguments>-Pmojo-release ${arguments}</arguments>
             </configuration>
           </plugin>
           <plugin>
