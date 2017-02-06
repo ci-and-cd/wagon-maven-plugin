@@ -156,7 +156,7 @@ public class DefaultMavenRepoMerger
             // fix merge snapshotVersion
             if (staged.getVersioning() != null &&
                 staged.getVersioning().getSnapshotVersions() != null &&
-                staged.getVersioning().getSnapshotVersions().isEmpty()) {
+                ! staged.getVersioning().getSnapshotVersions().isEmpty()) {
                 existing.getVersioning().setSnapshotVersions(staged.getVersioning().getSnapshotVersions());
             }
 
