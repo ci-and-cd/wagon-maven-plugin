@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>wagon-maven-plugin</artifactId>
+  <versioning>
+    <latest>wagon-maven-plugin-2.0.1-snapshot-chshawkn-1.6</latest>
+    <release>wagon-maven-plugin-2.0.1-snapshot-chshawkn-1.6</release>
+    <versions>
+      <version>wagon-maven-plugin-2.0.1-snapshot-chshawkn-1.6</version>
+    </versions>
+    <lastUpdated>20180528113155</lastUpdated>
+  </versioning>
+</metadata>
