@@ -19,12 +19,13 @@ package org.codehaus.mojo.wagon;
  * under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
+
+import java.io.IOException;
 
 /**
  * Provides base functionality for dealing with I/O using single wagon.
@@ -35,19 +36,17 @@ public abstract class AbstractSingleWagonMojo
 
     /**
      * URL to upload to or download from or list. Must exist and point to a directory.
-     * 
-     * @parameter property="wagon.url"
-     * @required
      */
+    @Parameter( property = "wagon.url", required = true )
     private String url;
 
     /**
      * settings.xml's server id for the URL. This is used when wagon needs extra authentication information.
-     * 
-     * @parameter property="wagon.serverId" default-value="serverId";
      */
+    @Parameter( property = "wagon.serverId", defaultValue = "serverId")
     private String serverId;
 
+    @Override
     public void execute()
         throws MojoExecutionException
     {
@@ -63,15 +62,10 @@ public abstract class AbstractSingleWagonMojo
             wagon = createWagon( serverId, url );
             execute( wagon );
         }
-        catch ( WagonException e )
+        catch ( WagonException | IOException e )
         {
             throw new MojoExecutionException( "Error handling resource", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error handling resource", e );
-        }
-        finally
+        } finally
         {
             try
             {
@@ -90,9 +84,10 @@ public abstract class AbstractSingleWagonMojo
     /**
      * Perform the necessary action. To be implemented in the child mojo.
      * 
-     * @param wagon
-     * @throws MojoExecutionException
-     * @throws WagonException
+     * @param wagon - wagon instance to use
+     * @throws MojoExecutionException if any execution error
+     * @throws WagonException if any wagon error
+     * @throws IOException if any io error
      */
     protected abstract void execute( Wagon wagon )
         throws MojoExecutionException, WagonException, IOException;

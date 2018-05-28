@@ -20,22 +20,20 @@ package org.codehaus.mojo.wagon.shared;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
 
-/**
- * @plexus.component role="org.codehaus.mojo.wagon.shared.WagonDownload" role-hint="default"
- */
-
+@Component(role = WagonDownload.class, hint = "default")
 public class DefaultWagonDownload
     implements WagonDownload
 {
 
+    @Override
     public List getFileList( Wagon wagon, WagonFileSet fileSet, Log logger )
         throws WagonException
     {
@@ -58,6 +56,7 @@ public class DefaultWagonDownload
         return dirScan.getFilesIncluded();
     }
 
+    @Override
     public void download( Wagon wagon, WagonFileSet remoteFileSet, Log logger )
         throws WagonException
     {
@@ -71,9 +70,9 @@ public class DefaultWagonDownload
             return;
         }
 
-        for ( Iterator iterator = fileList.iterator(); iterator.hasNext(); )
+        for ( Object aFileList : fileList )
         {
-            String remoteFile = (String) iterator.next();
+            String remoteFile = (String) aFileList;
 
             File destination = new File( remoteFileSet.getDownloadDirectory() + "/" + remoteFile );
 
@@ -88,11 +87,7 @@ public class DefaultWagonDownload
         }
     }
 
-    /**
-     * @param wagon - a Wagon instance
-     * @param resource - Remote resource to check
-     * @throws WagonException
-     */
+    @Override
     public boolean exists( Wagon wagon, String resource )
         throws WagonException
     {

@@ -38,30 +38,27 @@ import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * A copy of stage's plugin RepositoryCopier but use WagonUpload and WagonDownload instead
- * 
- * @plexus.component role="org.codehaus.mojo.wagon.shared.MavenRepoMerger" role-hint="default"
+ * A copy of stage's plugin RepositoryCopier but use WagonUpload and WagonDownload instead.
  */
-
+@Component(role = MavenRepoMerger.class, hint = "default")
 public class DefaultMavenRepoMerger
     implements MavenRepoMerger
 {
-    /**
-     * @plexus.requirement role="org.codehaus.mojo.wagon.shared.WagonDownload"
-     */
+    @Requirement
     private WagonDownload downloader;
 
-    /**
-     * @plexus.requirement role="org.codehaus.mojo.wagon.shared.WagonUpload"
-     */
+    @Requirement
     private WagonUpload uploader;
 
+    @Override
     public void merge( Wagon src, Wagon target, boolean optimize, Log logger )
         throws WagonException, IOException
     {
@@ -87,15 +84,14 @@ public class DefaultMavenRepoMerger
             scanner.scan();
             String[] files = scanner.getIncludedFiles();
 
-            for ( int i = 0; i < files.length; ++i )
+            for ( String file : files )
             {
-                File srcMetadaFile = new File( downloadSrcDir, files[i] + IN_PROCESS_MARKER );
+                File srcMetadaFile = new File( downloadSrcDir, file + IN_PROCESS_MARKER );
 
                 try
                 {
-                    target.get( files[i].replace( '\\', '/' ), srcMetadaFile );
-                }
-                catch ( ResourceDoesNotExistException e )
+                    target.get( file.replace( '\\', '/' ), srcMetadaFile );
+                } catch ( ResourceDoesNotExistException e )
                 {
                     // We don't have an equivalent on the targetRepositoryUrl side because we have something
                     // new on the sourceRepositoryUrl side so just skip the metadata merging.
@@ -105,10 +101,9 @@ public class DefaultMavenRepoMerger
                 try
                 {
                     mergeMetadata( srcMetadaFile, logger );
-                }
-                catch ( XmlPullParserException e )
+                } catch ( XmlPullParserException e )
                 {
-                    throw new IOException( "Metadata file is corrupt " + files[i] + " Reason: " + e.getMessage() );
+                    throw new IOException( "Metadata file is corrupt " + file + " Reason: " + e.getMessage() );
                 }
 
             }
@@ -134,7 +129,7 @@ public class DefaultMavenRepoMerger
         Writer stagedMetadataWriter = null;
         Reader existingMetadataReader = null;
         Reader stagedMetadataReader = null;
-        File stagedMetadataFile = null;
+        File stagedMetadataFile;
 
         try
         {
@@ -226,9 +221,9 @@ public class DefaultMavenRepoMerger
 
         String retValue = "";
 
-        for ( int i = 0; i < binaryData.length; i++ )
+        for ( byte aBinaryData : binaryData )
         {
-            String t = Integer.toHexString( binaryData[i] & 0xff );
+            String t = Integer.toHexString( aBinaryData & 0xff );
 
             if ( t.length() == 1 )
             {

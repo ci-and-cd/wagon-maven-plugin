@@ -20,63 +20,70 @@ package org.codehaus.mojo.wagon;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.wagon.CommandExecutor;
 import org.apache.maven.wagon.Streams;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
+import org.apache.maven.wagon.providers.ssh.jsch.AbstractJschWagon;
 import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
 
 /**
  * Executes a list of commands against a given server.
- *
- * @goal sshexec
- * @requiresProject true
  */
+@Mojo( name = "sshexec")
 public class SshExecMojo
     extends AbstractSingleWagonMojo
 {
 
     /**
      * The commands that we will execute.
-     *
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String[] commands;
 
     /**
-     * Allow option not to fail the build on error
-     *
-     * @parameter default-value = "true"
+     * Allow option not to fail the build on error.
      */
+    @Parameter(defaultValue = "true")
     private boolean failOnError = true;
 
     /**
-     * Option to display remote command's outputs
-     *
-     * @parameter default-value = "false"
+     * Option to display remote command's outputs.
      */
+    @Parameter(defaultValue = "false")
     private boolean displayCommandOutputs = true;
 
+    @Override
     protected void execute( final Wagon wagon )
         throws MojoExecutionException
     {
         if ( commands != null )
         {
-            for ( int i = 0; i < commands.length; i++ )
+            for ( String command : commands )
             {
                 try
                 {
-                    // since org.apache.maven.wagon:wagon-ssh:2.11-SNAPSHOT
-                    //Streams stream = ( (ScpWagon) wagon ).executeCommand( commands[i], true, false );
-                    Streams stream = ( (ScpWagon) wagon ).executeCommand( commands[i], true );
-                    this.getLog().info( "sshexec: " + commands[i] + " ..." );
+                    Streams stream;
+                    if ( wagon instanceof AbstractJschWagon )
+                    {
+                        // since org.apache.maven.wagon:wagon-ssh:2.11-SNAPSHOT
+                        //stream = ( (ScpWagon) wagon ).executeCommand( commands[i], true, false );
+                        // since org.apache.maven.wagon:wagon-ssh:3.0.0
+                        //stream = ( (AbstractJschWagon) wagon ).executeCommand( command, true, false );
+                        stream = ( (AbstractJschWagon) wagon ).executeCommand( command, true );
+                    } else
+                    {
+                        stream = ( (CommandExecutor) wagon ).executeCommand( command, false );
+                    }
+                    this.getLog().info( "sshexec: " + command + " ..." );
                     if ( displayCommandOutputs )
                     {
                         System.out.println( stream.getOut() );
                         System.out.println( stream.getErr() );
                     }
-                }
-                catch ( final WagonException e )
+                } catch ( final WagonException e )
                 {
                     if ( this.failOnError )
                     {

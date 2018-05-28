@@ -32,19 +32,16 @@ import org.apache.maven.wagon.WagonException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
 
-/**
- * @plexus.component role="org.codehaus.mojo.wagon.shared.WagonUpload" role-hint="default"
- */
-
+@Component(role = WagonUpload.class, hint = "default")
 public class DefaultWagonUpload
     implements WagonUpload
 {
 
-    /**
-     * @plexus.requirement role="org.codehaus.plexus.archiver.manager.ArchiverManager"
-     */
+    @Requirement
     private ArchiverManager archiverManager;
 
     public void upload( Wagon wagon, FileSet fileset, Log logger )
@@ -63,16 +60,16 @@ public class DefaultWagonUpload
             return;
         }
 
-        for ( int i = 0; i < files.length; ++i )
+        for ( String file : files )
         {
-            String relativeDestPath = StringUtils.replace( files[i], "\\", "/" );
+            String relativeDestPath = StringUtils.replace( file, "\\", "/" );
 
             if ( !StringUtils.isBlank( fileset.getOutputDirectory() ) )
             {
                 relativeDestPath = fileset.getOutputDirectory() + "/" + relativeDestPath;
             }
 
-            File source = new File( fileset.getDirectory(), files[i] );
+            File source = new File( fileset.getDirectory(), file );
 
             logger.info( "Uploading " + source + " to " + url + relativeDestPath + " ..." );
 
@@ -81,6 +78,7 @@ public class DefaultWagonUpload
 
     }
 
+    @Override
     public void upload( Wagon wagon, FileSet fileset, boolean optimize, Log logger )
         throws WagonException, IOException
     {

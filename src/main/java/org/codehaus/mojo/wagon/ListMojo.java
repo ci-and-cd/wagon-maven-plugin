@@ -23,27 +23,27 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.WagonException;
 
 /**
- * Lists the content of the specified directory (remotePath) under a specified repository (url)
- * 
- * @goal list
- * @requiresProject false
+ * Lists the content of the specified directory (remotePath) under a specified repository (url).
  */
+@Mojo( name = "list" , requiresProject = false)
 public class ListMojo
     extends AbstractWagonListMojo
 {
 
+    @Override
     protected void execute( Wagon wagon )
-        throws MojoExecutionException, WagonException
+        throws WagonException
     {
         List files = wagonDownload.getFileList( wagon, this.getWagonFileSet(), this.getLog() );
 
-        for ( Iterator iterator = files.iterator(); iterator.hasNext(); )
+        for ( Object file1 : files )
         {
-            String file = (String) iterator.next();
+            String file = (String) file1;
             getLog().info( "\t" + file );
         }
     }
