@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>wagon-maven-plugin</artifactId>
-  <version>wagon-maven-plugin-2.0.1-snapshot-chshawkn-1.7-SNAPSHOT</version>
+  <version>wagon-maven-plugin-2.0.1-snapshot-chshawkn-1.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Wagon Maven Plugin</name>
 
@@ -488,7 +488,7 @@ EOF gpg \-\-batch \-\-gen-key maven_gpg_key_with_default_algorithms gpg \-\-impo
               <!-- github repo name -->
               <repositoryName>${project.artifactId}</repositoryName>
               <!-- github username  -->
-              <repositoryOwner>chshawkn</repositoryOwner>
+              <repositoryOwner>ci-and-cd</repositoryOwner>
             </configuration>
             <executions>
               <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
