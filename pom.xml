@@ -432,7 +432,7 @@ EOF gpg \-\-batch \-\-gen-key maven_gpg_key_with_default_algorithms gpg \-\-impo
       </activation>
       <properties>
         <!-- github server corresponds to entry in ~/.m2/settings.xml -->
-        <github.global.server>github-chshawkn</github.global.server>
+        <github.global.server>github-site</github.global.server>
       </properties>
       <!-- see: http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github -->
       <distributionManagement>
